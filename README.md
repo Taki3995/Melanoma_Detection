@@ -55,4 +55,8 @@ El rendimiento de los modelos será evaluado utilizando la métrica **F1 Score**
    - Visualización de predicciones correctas e incorrectas.  
    - (Opcional) Interpretabilidad con Grad-CAM o mapas de calor para observar qué partes de la imagen influyen más en la predicción.
 
+## Notas
 
+Con la primera versión del código (usando resnet) se llego a un f1-score de 0.98095, por lo que se implementó TTA, lo que dio una mejora. El resultado fue de 0.98113, que aunque fue poco, mejoró. 
+
+En una segunda versión se implementó EfficientNet y se hizo un Data Augmentation más robusto.
