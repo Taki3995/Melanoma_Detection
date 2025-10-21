@@ -67,3 +67,5 @@ el efficientnet tuvo peor desempeño. suavizar data augmentation
 efficientnet con data augmentation mas simple tuvo mejor desempeño, pero aun es peor que resnet. 
 
 se probará efficientnet con data augmentation no compleja y fine tuning
+
+Efficientnet con fine tuning tuvo resultados extremadamente buenos, se llegó al 100% de score y el modelo funciona bien.
