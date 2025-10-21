@@ -63,3 +63,7 @@ En una segunda versión se implementó EfficientNet y se hizo un Data Augmentati
 El effnet solamente con adamw no funciono y el f1 score decayo de 0.99 a 0.97, se agregará nuevamente el modelo adam, pero seguimos sin agregar sgd. aumenta la paciencia, los epochs y los trials. se entrenará denuevo
 
 el efficientnet tuvo peor desempeño. suavizar data augmentation
+
+efficientnet con data augmentation mas simple tuvo mejor desempeño, pero aun es peor que resnet. 
+
+se probará efficientnet con data augmentation no compleja y fine tuning
