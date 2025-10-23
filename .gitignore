@@ -1,2 +1,3 @@
 # Ignorar el entorno virtual de Python
 .venv/
+data/kaggle_external_data/
