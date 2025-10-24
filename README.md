@@ -69,3 +69,7 @@ efficientnet con data augmentation mas simple tuvo mejor desempeño, pero aun es
 se probará efficientnet con data augmentation no compleja y fine tuning
 
 Efficientnet con fine tuning tuvo resultados extremadamente buenos, se llegó al 100% de score y el modelo funciona bien.
+
+se descubre sobreajuste, se prueban varias cosas sin mejora. 
+
+se vuelve a implementar resnet18, con mas data augmentation, con kfolds, con fine tuning
