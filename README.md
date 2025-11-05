@@ -1,4 +1,4 @@
-# Instrucciones´
+# Instrucciones
 Este trabajo se puede revisar / correr tanto desde el archivo "melanoma_detection.ipynb" como corriendo el archivo "main.py" de la carpeta "Python Code". Ambos tienen lo mismo, pero desde el Jupyter Notebook se puede visualizar las celdas ya ejecutadas. 
 
 Están guardados en la carpeta "outputs" el estudio de hiperparámetros, el mejor modelo y el submission, por lo que no es necesario correr la búsqueda de hiperparámetros y de mejor modelo nuevamente.
