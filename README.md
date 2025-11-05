@@ -1,3 +1,8 @@
+# Instrucciones´
+Este trabajo se puede revisar / correr tanto desde el archivo "melanoma_detection.ipynb" como corriendo el archivo "main.py" de la carpeta "Python Code". Ambos tienen lo mismo, pero desde el Jupyter Notebook se puede visualizar las celdas ya ejecutadas. 
+
+Están guardados en la carpeta "outputs" el estudio de hiperparámetros, el mejor modelo y el submission, por lo que no es necesario correr la búsqueda de hiperparámetros y de mejor modelo nuevamente.
+
 # Clasificación de Melanomas
 Este proyecto fue desarrollado para el curso "Optimización 2" en la Pontificia Universidad Católica de Chile. El problema dado es una clasificacion binaria de imágenes 
 específicamente la detección de Melanoma (1) frente a No Melanoma (0) a partir de fotografías clínicas de lesiones en la piel. El objetivo es desarrollar un modelo capaz 
@@ -55,21 +60,34 @@ El rendimiento de los modelos será evaluado utilizando la métrica **F1 Score**
    - Visualización de predicciones correctas e incorrectas.  
    - (Opcional) Interpretabilidad con Grad-CAM o mapas de calor para observar qué partes de la imagen influyen más en la predicción.
 
-## Notas
 
-Con la primera versión del código (usando resnet) se llego a un f1-score de 0.98095, por lo que se implementó TTA, lo que dio una mejora. El resultado fue de 0.98113, que aunque fue poco, mejoró. 
+# Bitácora de Experimentación y Descubrimientos del Proyecto
 
-En una segunda versión se implementó EfficientNet y se hizo un Data Augmentation más robusto.
-El effnet solamente con adamw no funciono y el f1 score decayo de 0.99 a 0.97, se agregará nuevamente el modelo adam, pero seguimos sin agregar sgd. aumenta la paciencia, los epochs y los trials. se entrenará denuevo
+El desarrollo de este proyecto consistió en un proceso iterativo de experimentación para optimizar la clasificación binaria de imágenes de melanoma, utilizando el F1-Score como métrica principal. A continuación, se detallan los hallazgos clave y la evolución de la metodología.
 
-el efficientnet tuvo peor desempeño. suavizar data augmentation
+### 1. Línea Base Inicial: ResNet18
+El punto de partida fue la implementación de una arquitectura ResNet18 pre-entrenada, utilizando únicamente *transfer learning* (congelando el *backbone* y entrenando solo el clasificador).
+* **Resultado:** Se alcanzó un F1-Score notable de **0.98095**.
+* **Mejora con TTA:** Se introdujo la técnica de *Test Time Augmentation* (TTA), promediando las predicciones de la imagen original y su volteo horizontal. Esto resultó en una mejora marginal pero consistente, elevando el F1-Score a **0.98113**.
 
-efficientnet con data augmentation mas simple tuvo mejor desempeño, pero aun es peor que resnet. 
+### 2. Pivote Estratégico: EfficientNet-B2
+Buscando superar la alta línea base, la segunda fase del proyecto se centró en una arquitectura más moderna y potente, EfficientNet-B2. La hipótesis era que un modelo más avanzado, combinado con un *Data Augmentation* más robusto (incluyendo rotaciones, cambios de color y *Random Erasing*), capturaría características más complejas.
+* **Resultado Inesperado:** La implementación inicial, utilizando solo el optimizador AdamW, tuvo un rendimiento inferior al de ResNet18. El F1-Score decayó significativamente a aproximadamente **0.97**.
+* **Ajuste (Data Augmentation):** Se teorizó que la combinación de un modelo complejo y un *Data Augmentation* agresivo dificultaba el aprendizaje. Al suavizar el *Data Augmentation* (haciéndolo menos complejo), el rendimiento de EfficientNet mejoró, pero aún se mantenía por debajo del F1-Score obtenido con ResNet18.
 
-se probará efficientnet con data augmentation no compleja y fine tuning
+### 3. Introducción del Fine-Tuning y Detección de Sobreajuste
+El siguiente paso fue explorar el *Fine-Tuning* (descongelamiento de las últimas capas convolucionales) en la arquitectura EfficientNet.
+* **Falso Positivo:** Esta técnica arrojó resultados inicialmente extraordinarios, alcanzando un **F1-Score perfecto de 1.0** en el conjunto de validación.
+* **Descubrimiento Crítico:** Un análisis más profundo reveló que este resultado no era producto de la generalización, sino de un **severo sobreajuste** (*overfitting*). El modelo había memorizado eficazmente el conjunto de validación, un riesgo exacerbado por la alta capacidad del modelo EfficientNet frente a un conjunto de datos limitado.
 
-Efficientnet con fine tuning tuvo resultados extremadamente buenos, se llegó al 100% de score y el modelo funciona bien.
+### 4. Síntesis y Modelo Final: ResNet18 con K-Fold y Fine-Tuning
+Habiendo identificado el sobreajuste como el principal adversario, el proyecto retornó estratégicamente a la arquitectura ResNet18, que había demostrado ser más estable. Esta implementación final no fue una simple regresión, sino una síntesis de todas las lecciones aprendidas:
+* **Arquitectura Estable:** Se utilizó **ResNet18**.
+* **Fine-Tuning Controlado:** Se descongelaron las últimas capas convolucionales (`layer3` y `layer4`) para permitir que el modelo ajustara sus detectores de características de alto nivel.
+* **Data Augmentation Robusto:** Se mantuvo el *Data Augmentation* más complejo implementado en la fase 2.
+* **Validación Robusta (K-Fold):** Para combatir el sobreajuste a un único conjunto de validación, se implementó una **Validación Cruzada de 5 Pliegues (K-Fold)**. La optimización de hiperparámetros (Optuna) se realizó promediando el F1-Score de los 5 pliegues, forzando al modelo a generalizar.
+* **Resultado:** Este enfoque híbrido demostró ser el más exitoso, generando el modelo con el mejor rendimiento promedio y la mayor robustez en los datos de entrenamiento y validación combinados.
 
-se descubre sobreajuste, se prueban varias cosas sin mejora. 
-
-se vuelve a implementar resnet18, con mas data augmentation, con kfolds, con fine tuning
+### 5. Conclusión y Análisis de Generalización
+El modelo final, si bien fue el de mejor desempeño en el set de datos proporcionado, exhibió dificultades al ser evaluado contra un **conjunto de datos externo** (de Kaggle), donde su rendimiento disminuyó significativamente.
+Este hallazgo final subraya una conclusión clave: el conjunto de datos original, aunque balanceado, es probablemente **limitado en su diversidad**. Las imágenes pueden carecer de variabilidad en iluminación, calidad, ruido o artefactos presentes en datos "salvajes". Como resultado, el modelo desarrolló un sobreajuste al *dominio* específico de los datos de entrenamiento, limitando su generalización en escenarios de inferencia completamente nuevos.
