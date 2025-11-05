@@ -22,7 +22,7 @@ from models import get_resnet_model
 from utils import train_one_epoch
 
 def main():
-    print("========================== Entrenamiento ==========================")
+    print("========================== TRAINING ==========================")
     
     # Setear seeds
     random.seed(config.SEED)
